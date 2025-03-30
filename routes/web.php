@@ -1,13 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\File;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    $houses = File::json(storage_path('json/api-free-p1.json'))['data']['houses'];
-    return view('home', [
-        'title' => 'Huurwoningen in Amsterdam',
-        'houses' => $houses,
-        'houseCount' => count($houses) . ' resultaten',
-    ]);
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
