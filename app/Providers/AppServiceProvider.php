@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\JsonMergeService;
+use App\Services\HouseService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,8 +12,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(JsonMergeService::class, function () {
-            return new JsonMergeService;
+        $this->app->bind(HouseService::class, function () {
+            return new HouseService;
         });
     }
 

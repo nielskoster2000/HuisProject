@@ -10,29 +10,52 @@
     @vite('resources/css/app.css')
 </head>
 
-<body class="py-14 px-28">
-    <div class="flex justify-between mb-10 border-b-1 pb-5 border-stone-200">
-        <span class="text-4xl font-semibold">{{ $title ?? 'Huurwoningen in Amsterdam' }}</span>
-        <div class="flex flex-col text-right">
-            <span class="font-semibold">{{ $houseCount ?? '0 Resultaten' }}</span>
+<body class="py-8 px-14 lg:py-14 lg:px-28 font-Urbanist">
+    <div class="flex flex-col lg:flex-row justify-between mb-10 border-b-1 pb-5 border-stone-200 gap-6">
+        <span class="text-4xl font-semibold shrink-0">{{ $title ?? 'Huurwoningen in Amsterdam' }}</span>
+        <div class="flex flex-col lg:text-right">
+            <span class="font-semibold">{{ $houseCount }} resultaten</span>
             <span class="text-blue-700 underline">Ontgrendel 944 woningen in Amsterdam met een Gratis Account</span>
         </div>
     </div>
 
-    <div class="flex gap-12">
-        <div class="w-80 flex flex-col gap-8 border-r-1 border-stone-200 pr-5">
-            <div class="flex flex-col">
+    <div class="flex gap-10 lg:gap-18 lg:flex-row flex-col">
+        <div class="flex flex-col gap-8 lg:border-r-1 pb-10 border-b-1 border-stone-200 lg:pr-5 lg:w-xs w-full">
+            <div class="flex flex-col gap-2">
                 <span class="font-semibold text-2xl">Filters</span>
                 <span class=" text-stone-600"> Wij zoeken woningen op meer dan 300 huursites en bundelen alle gevonden woningen in een overzichtelijk aanbod.</span>
             </div>
-            <x-search></x-search>
-            <x-pricecompare></x-pricecompare>
+                <x-search></x-search>
+                <x-pricecompare></x-pricecompare>
         </div>
-        <div class="">
-            <x-listinggrid :houses="$houses"></x-listinggrid>
-            <x-pagination :count="10"></x-pagination>
+        <div class="flex-auto">
+            <div id="listingGrid"></div>
+            <!-- <x-pagination :count="10"></x-pagination> -->
         </div>
     </div>
 </body>
 
 </html>
+
+<script>
+    const listingGrid = document.getElementById('listingGrid');
+    const search = document.getElementById('search');
+    const pmin = document.getElementById('pmin');
+    const pmax = document.getElementById('pmax');
+
+    async function loadHouses() {
+        let params = new URLSearchParams({
+            search: search.value,
+            pmin: pmin.value,
+            pmax: pmax.value
+        });
+        const response = await fetch('/houses?' + params.toString());
+        listingGrid.innerHTML = await response.text();
+    }
+
+    loadHouses();
+
+    search.addEventListener('input', () => loadHouses());
+    pmin.addEventListener('input', () => loadHouses());
+    pmax.addEventListener('input', () => loadHouses());
+</script>
