@@ -2,7 +2,7 @@
 
     <button id="previousButton" class="transition rounded-md px-4 py-2">&#8249; Vorige</button>
 
-    @foreach (range($i = 0, $pageCount - 1) as $page)
+    @foreach (range($i = 0, max(0, $pageCount - 1)) as $page)
         <button class="paginationButton outline-none transition rounded-md px-4 py-2">
             {{ $page + 1 }}
         </button>
@@ -12,11 +12,11 @@
 </div>
 
 <style>
-    button {
+    #pagination button {
         color: var(--color-stone-800);
         background-color: var(--color-white);
     }
-    button:hover, button.active {
+    #pagination button:hover, #pagination button.active {
         color: var(--color-white);
         background-color: var(--color-blue-700);
     }
