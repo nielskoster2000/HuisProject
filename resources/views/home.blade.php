@@ -46,7 +46,7 @@
     const pmin = document.getElementById('pmin');
     const pmax = document.getElementById('pmax');
 
-    async function loadHouses(page = 0, updatePagination = true) {
+    async function loadHouses(page = 0) {
         let params = new URLSearchParams({
             search: search.value,
             pmin: pmin.value,
@@ -54,23 +54,42 @@
             page: page
         });
         const response = await fetch('/filter?' + params.toString());
-        const json = await response.json();
 
+        const json = await response.json();
         listingGrid.innerHTML = json['housesHTML'];
         resultCount.innerHTML = json['count'];
 
-        if (updatePagination) {
-            pagination.innerHTML = json['paginationHTML'];
-            reloadPagination(); 
-        }
+        return json['count'];
     }
 
-    loadHouses();
+    async function loadPagination(count) {
+        let params = new URLSearchParams({
+            count: count
+        });
+        const response = await fetch('/pagination?' + params.toString());
+
+        pagination.innerHTML = await response.text();
+        reloadPagination(); 
+    }
+
+    loadHouses().then(function(count) {
+        loadPagination(count);
+    }); 
 
     document.getElementById('pagination').addEventListener('pagechanged', (event) => { 
-        loadHouses(event.detail.page, false);
+        loadHouses(event.detail.page);
     });
-    search.addEventListener('input', () => loadHouses());
-    pmin.addEventListener('input', () => loadHouses());
-    pmax.addEventListener('input', () => loadHouses());
+
+    search.addEventListener('input', async function () { 
+        let count = await loadHouses(); 
+        loadPagination(count);
+    });
+    pmin.addEventListener('input', async function () { 
+        let count = await loadHouses(); 
+        loadPagination(count);
+    });
+    pmax.addEventListener('input', async function () { 
+        let count = await loadHouses(); 
+        loadPagination(count);
+    });
 </script>

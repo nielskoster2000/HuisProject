@@ -43,13 +43,19 @@ class HomeController extends Controller
         });
 
         $count = $filteredHouses->count();
-        $pageCount = ceil($count / 9);
         $paginatedHouses = $filteredHouses->slice($page * 9, 9);
-        
+
         return [
             'housesHTML' => view('components.listinggrid', ['houses' => $paginatedHouses])->render(),
-            'paginationHTML' => view('components.pagination', ['pageCount' => $pageCount])->render(),
             'count' => $count,
         ];
+    }
+
+    public function pagination(Request $request)
+    {
+        $count = $request->input('count');
+        $pageCount = ceil($count / 9);
+
+        return view('components.pagination', ['pageCount' => $pageCount])->render();
     }
 }

@@ -1,25 +1,22 @@
 let currentPage = 0;
 
 window.reloadPagination = function () {
-    console.log("reloadPagination");
-
     currentPage = 0;
 
     const previousButton = document.getElementById('previousButton');
     const nextButton = document.getElementById('nextButton');
     const paginationButtons = document.getElementsByClassName('paginationButton');
 
-    previousButton.addEventListener('click', function () { console.log("click previous"); setPage(currentPage - 1) });
+    previousButton.addEventListener('click', function () { setPage(currentPage - 1) });
     nextButton.addEventListener('click', function () { setPage(currentPage + 1) });
     for (let i = 0; i < paginationButtons.length; i++) {
         paginationButtons[i].addEventListener('click', function () { setPage(i) });
     }
 
-    setPage(currentPage);
+    setPage(currentPage, false);
 }
 
-window.setPage = function (page) {
-
+function setPage(page, dispatchEvent = true) {
     const pagination = document.getElementById('pagination');
     const previousButton = document.getElementById('previousButton');
     const nextButton = document.getElementById('nextButton');
@@ -33,7 +30,9 @@ window.setPage = function (page) {
 
     currentPage = page;
 
-    pagination.dispatchEvent(new CustomEvent("pagechanged", {
-        detail: { page: currentPage }
-    }));
+    if (dispatchEvent) {
+        pagination.dispatchEvent(new CustomEvent("pagechanged", {
+            detail: { page: currentPage }
+        }));
+    }
 }
