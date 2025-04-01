@@ -14,16 +14,17 @@ class HomeController extends Controller
         $this->houseService = $houseService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('home', ['houseCount' => $this->houseService->getHouses()->count()]);
+        return view('home');
     }
 
-    public function houses(Request $request)
+    public function filter(Request $request)
     {
         $search = strtolower($request->input('search'));
         $pmin = $request->input('pmin');
         $pmax = $request->input('pmax');
+        $page = $request->input('page');
 
         $houses = $this->houseService->getHouses();
         $filteredHouses = $houses->filter(function ($item) use ($search, $pmin, $pmax) {
@@ -31,12 +32,30 @@ class HomeController extends Controller
                 return false;
             }
 
-            if ($pmin && $item['price'] < $pmin) { return false; }
-            if ($pmax && $item['price'] > $pmax) { return false; }
+            if ($pmin && $item['price'] < $pmin) {
+                return false;
+            }
+            if ($pmax && $item['price'] > $pmax) {
+                return false;
+            }
 
             return true;
         });
 
-        return view('components.listinggrid', ['houses' => $filteredHouses]);
+        $count = $filteredHouses->count();
+        $paginatedHouses = $filteredHouses->slice($page * 9, 9);
+
+        return [
+            'housesHTML' => view('components.listinggrid', ['houses' => $paginatedHouses])->render(),
+            'count' => $count,
+        ];
+    }
+
+    public function pagination(Request $request)
+    {
+        $count = $request->input('count');
+        $pageCount = ceil($count / 9);
+
+        return view('components.pagination', ['pageCount' => $pageCount])->render();
     }
 }
