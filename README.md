@@ -60,3 +60,4 @@ Ik ben best blij met het eindresultaat, maar er zijn wel dingen die ik anders zo
 - De HomeController is nog te rommelig
 - Te veel tijd besteed aan pagination ipv template en component gebruik
 - Heb tijdens het maken van alle componenten al meteen gekeken naar responsive design: compleet buiten de scope van de opdracht
+- Laat in het project pas echt github branches gebruikt
