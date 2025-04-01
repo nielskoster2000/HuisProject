@@ -1,5 +1,5 @@
-<div class="rounded-lg shadow-md flex flex-col">
-    <img src="{{ $house['image'] }}" class="rounded-t-lg h-48 object-cover">
+<div class="rounded-lg shadow-md flex flex-col h-[21rem]">
+    <img src="{{ $house['image'] }}" class="rounded-t-lg h-54 object-cover">
     <div class="px-4 py-4 flex flex-col">
         <span class="font-semibold"> {{ $house['street'] }} </span>
         <span class=" text-stone-400 mb-4"> {{ $house['city'] }} </span>
