@@ -8,13 +8,14 @@
     <title>HuisApplicatie</title>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;600;700&display=swap" rel="stylesheet">
     @vite('resources/css/app.css')
+    @vite('resources/js/pagination.js')
 </head>
 
 <body class="py-8 px-14 lg:py-14 lg:px-28 font-Urbanist">
     <div class="flex flex-col lg:flex-row justify-between mb-10 border-b-1 pb-5 border-stone-200 gap-6">
         <span class="text-4xl font-semibold shrink-0">{{ $title ?? 'Huurwoningen in Amsterdam' }}</span>
         <div class="flex flex-col lg:text-right">
-            <span class="font-semibold">{{ $houseCount }} resultaten</span>
+            <span class="font-semibold"><span id="resultCount"></span> resultaten</span>
             <span class="text-blue-700 underline">Ontgrendel 944 woningen in Amsterdam met een Gratis Account</span>
         </div>
     </div>
@@ -30,7 +31,7 @@
         </div>
         <div class="flex-auto">
             <div id="listingGrid"></div>
-            <!-- <x-pagination :count="10"></x-pagination> -->
+            <div id="pagination"></div>
         </div>
     </div>
 </body>
@@ -39,22 +40,36 @@
 
 <script>
     const listingGrid = document.getElementById('listingGrid');
+    const pagination = document.getElementById('pagination');
+    const resultCount = document.getElementById('resultCount');
     const search = document.getElementById('search');
     const pmin = document.getElementById('pmin');
     const pmax = document.getElementById('pmax');
 
-    async function loadHouses() {
+    async function loadHouses(page = 0, updatePagination = true) {
         let params = new URLSearchParams({
             search: search.value,
             pmin: pmin.value,
-            pmax: pmax.value
+            pmax: pmax.value,
+            page: page
         });
-        const response = await fetch('/houses?' + params.toString());
-        listingGrid.innerHTML = await response.text();
+        const response = await fetch('/filter?' + params.toString());
+        const json = await response.json();
+
+        listingGrid.innerHTML = json['housesHTML'];
+        resultCount.innerHTML = json['count'];
+
+        if (updatePagination) {
+            pagination.innerHTML = json['paginationHTML'];
+            reloadPagination(); 
+        }
     }
 
     loadHouses();
 
+    document.getElementById('pagination').addEventListener('pagechanged', (event) => { 
+        loadHouses(event.detail.page, false);
+    });
     search.addEventListener('input', () => loadHouses());
     pmin.addEventListener('input', () => loadHouses());
     pmax.addEventListener('input', () => loadHouses());
