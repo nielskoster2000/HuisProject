@@ -56,10 +56,10 @@
         const response = await fetch('/filter?' + params.toString());
 
         const json = await response.json();
-        listingGrid.innerHTML = json['housesHTML'];
-        resultCount.innerHTML = json['count'];
+        listingGrid.innerHTML = json['houses'];
+        resultCount.innerHTML = json['houseCount'];
 
-        return json['count'];
+        return json['houseCount'];
     }
 
     async function loadPagination(count) {

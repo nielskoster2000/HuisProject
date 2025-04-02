@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Filter;
 use App\Services\HouseService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -14,12 +17,12 @@ class HomeController extends Controller
         $this->houseService = $houseService;
     }
 
-    public function index()
+    public function index() : View
     {
         return view('home');
     }
 
-    public function filter(Request $request)
+    public function filter(Request $request) : JsonResponse
     {
         $search = strtolower($request->input('search'));
         $pmin = $request->input('pmin');
@@ -45,14 +48,12 @@ class HomeController extends Controller
 
         $count = $filteredHouses->count();
         $paginatedHouses = $filteredHouses->slice($page * 9, 9);
+        $view = view('components.listinggrid', ['houses' => $paginatedHouses])->render();
 
-        return [
-            'housesHTML' => view('components.listinggrid', ['houses' => $paginatedHouses])->render(),
-            'count' => $count,
-        ];
+        return response()->json(new Filter($view, $count));
     }
 
-    public function pagination(Request $request)
+    public function pagination(Request $request) : string
     {
         $count = $request->input('count');
         $pageCount = ceil($count / 9);
