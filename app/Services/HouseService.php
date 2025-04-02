@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\File;
 
 class HouseService
 {
-    public function getHouses($search = null, $pmin = null, $pmax = null): Collection
+    public function getHouses(?string $search = null, ?int $pmin = null, ?int $pmax = null): Collection
     {
         $data = File::json(resource_path('sample-data/woningen.json'));
         $houses = collect($data['data']['houses']);

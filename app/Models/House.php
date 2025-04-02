@@ -12,7 +12,7 @@ class House
 
     public $image = null;
 
-    public function __construct($street, $city, $price, $image = null)
+    public function __construct(string $street, string $city, int $price, ?string $image = null)
     {
         $this->street = $street;
         $this->city = $city;
@@ -20,7 +20,7 @@ class House
         $this->image = $image;
     }
 
-    public function filter($search = null, $pmin = null, $pmax = null): bool
+    public function filter(?string $search = null, ?int $pmin = null, ?int $pmax = null): bool
     {
         if ($search && ! (str_contains(strtolower($this->street), $search) || str_contains(strtolower($this->city), $search))) {
             return false;
