@@ -19,4 +19,20 @@ class House
         $this->price = $price;
         $this->image = $image;
     }
+
+    public function filter($search, $pmin, $pmax) : bool
+    {
+        if ($search && ! (str_contains(strtolower($this->street), $search) || str_contains(strtolower($this->city), $search))) {
+            return false;
+        }
+
+        if ($pmin && $this->price < $pmin) {
+            return false;
+        }
+        if ($pmax && $this->price > $pmax) {
+            return false;
+        }
+
+        return true;
+    }
 }

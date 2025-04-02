@@ -32,18 +32,7 @@ class HomeController extends Controller
         $houses = $this->houseService->getHouses();
 
         $filteredHouses = $houses->filter(function ($house) use ($search, $pmin, $pmax) {
-            if ($search && ! (str_contains(strtolower($house->street), $search) || str_contains(strtolower($house->city), $search))) {
-                return false;
-            }
-
-            if ($pmin && $house->price < $pmin) {
-                return false;
-            }
-            if ($pmax && $house->price > $pmax) {
-                return false;
-            }
-
-            return true;
+            return $house->filter($search, $pmin, $pmax);
         });
 
         $count = $filteredHouses->count();
