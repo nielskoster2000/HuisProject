@@ -8,18 +8,22 @@ use Illuminate\Support\Facades\File;
 
 class HouseService
 {
-    public function getHouses(): Collection
+    public function getHouses($search = null, $pmin = null, $pmax = null): Collection
     {
         $data = File::json(resource_path('sample-data/woningen.json'));
         $houses = collect($data['data']['houses']);
 
-        return $houses->map(function ($house) {
+        $mappedHouses = $houses->map(function ($house) {
             return new House(
                 $house['street'],
                 $house['city'],
                 $house['price'],
-                $house['images'][0]['url']
+                $house['images'][0]['url'] ?? null
             );
+        });
+
+        return $mappedHouses->filter(function ($house) use ($search, $pmin, $pmax) {
+            return $house->filter($search, $pmin, $pmax);
         });
     }
 }
