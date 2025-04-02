@@ -14,7 +14,7 @@ class HomeController extends Controller
         $this->houseService = $houseService;
     }
 
-    public function index(Request $request)
+    public function index()
     {
         return view('home');
     }
@@ -27,15 +27,16 @@ class HomeController extends Controller
         $page = $request->input('page');
 
         $houses = $this->houseService->getHouses();
-        $filteredHouses = $houses->filter(function ($item) use ($search, $pmin, $pmax) {
-            if ($search && ! (str_contains(strtolower($item['street']), $search) || str_contains(strtolower($item['city']), $search))) {
+
+        $filteredHouses = $houses->filter(function ($house) use ($search, $pmin, $pmax) {
+            if ($search && ! (str_contains(strtolower($house->street), $search) || str_contains(strtolower($house->city), $search))) {
                 return false;
             }
 
-            if ($pmin && $item['price'] < $pmin) {
+            if ($pmin && $house->price < $pmin) {
                 return false;
             }
-            if ($pmax && $item['price'] > $pmax) {
+            if ($pmax && $house->price > $pmax) {
                 return false;
             }
 
