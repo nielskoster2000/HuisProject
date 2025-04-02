@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Filter;
 use App\Services\HouseService;
 use Illuminate\Contracts\View\View;
@@ -29,9 +30,13 @@ class HomeController extends Controller
         $search = strtolower($request->input('search'));
         $pmin = $request->input('pmin');
         $pmax = $request->input('pmax');
-        $page = $request->input('page');
+        $page = $request->input('page', 0);
 
-        $houses = $this->houseService->getHouses($search, $pmin, $pmax);
+        try {
+            $houses = $this->houseService->getHouses($search, $pmin, $pmax);
+        } catch (Exception $e) {
+            return abort(404, 'Failed to retrieve houses');
+        }
 
         // Retrieves a paginated subset of houses based on the current page size.
         $paginatedHouses = $houses->slice($page * $this->pageSize, $this->pageSize);
@@ -44,7 +49,7 @@ class HomeController extends Controller
 
     public function pagination(Request $request): string
     {
-        $count = $request->input('count');
+        $count = $request->input('count', 0);
         $pageCount = ceil($count / $this->pageSize);
 
         return view('components.pagination', ['pageCount' => $pageCount])->render();
