@@ -23,6 +23,10 @@ npm install
   ```bash
   php artisan key:generate
   ```
+- Voer dit commando uit om een koppeling te maken met de storage (nodig voor fallback afbeelding):
+  ```bash
+  php artisan storage:link
+  ```
 
 ## Stap 5: Start de frontend
 ```bash
