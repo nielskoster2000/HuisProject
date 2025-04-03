@@ -4,13 +4,12 @@ namespace App\Models;
 
 class Filter
 {
-    public $houses;
-
+    public $listinggrid;
     public $houseCount;
 
-    public function __construct(string $houses, int $houseCount)
+    public function __construct(string $listinggrid, int $houseCount)
     {
-        $this->houses = $houses;
+        $this->listinggrid = $listinggrid;
         $this->houseCount = $houseCount;
     }
 }

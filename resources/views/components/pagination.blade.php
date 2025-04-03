@@ -1,5 +1,4 @@
 <div id="pagination" class="flex justify-center mt-10 flex-wrap">
-
     <button id="previousButton" class="transition rounded-md px-4 py-2">&#8249; Vorige</button>
 
     @foreach (range($i = 0, max(0, $pageCount - 1)) as $page)

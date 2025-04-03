@@ -15,7 +15,7 @@
     <div class="flex flex-col lg:flex-row justify-between mb-10 border-b-1 pb-5 border-stone-200 gap-6">
         <span class="text-4xl font-semibold shrink-0">{{ $title ?? 'Huurwoningen in Amsterdam' }}</span>
         <div class="flex flex-col lg:text-right">
-            <span class="font-semibold"><span id="resultCount"></span> resultaten</span>
+            <span class="font-semibold"><span id="houseCount"></span> resultaten</span>
             <span class="text-blue-700 underline">Ontgrendel 944 woningen in Amsterdam met een Gratis Account</span>
         </div>
     </div>
@@ -41,23 +41,23 @@
 <script>
     const listingGrid = document.getElementById('listingGrid');
     const pagination = document.getElementById('pagination');
-    const resultCount = document.getElementById('resultCount');
+    const houseCount = document.getElementById('houseCount');
     const search = document.getElementById('search');
     const pmin = document.getElementById('pmin');
     const pmax = document.getElementById('pmax');
 
-    async function loadHouses(page = 0) {
+    async function loadHouses(pageNumber = 0) {
         let params = new URLSearchParams({
             search: search.value,
             pmin: pmin.value,
             pmax: pmax.value,
-            page: page
+            page: pageNumber
         });
         const response = await fetch('/filter?' + params.toString());
 
         const json = await response.json();
-        listingGrid.innerHTML = json['houses'];
-        resultCount.innerHTML = json['houseCount'];
+        listingGrid.innerHTML = json['listinggrid'];
+        houseCount.innerHTML = json['houseCount'];
 
         return json['houseCount'];
     }
@@ -77,7 +77,7 @@
     }); 
 
     document.getElementById('pagination').addEventListener('pagechanged', (event) => { 
-        loadHouses(event.detail.page);
+        loadHouses(event.detail.pageNumber);
     });
 
     search.addEventListener('input', async function () { 

@@ -27,7 +27,7 @@ class HomeController extends Controller
 
     public function filter(Request $request): JsonResponse
     {
-        $search = strtolower($request->input('search'));
+        $search = $request->input('search');
         $pmin = $request->input('pmin');
         $pmax = $request->input('pmax');
         $page = $request->input('page', 0);
@@ -41,10 +41,8 @@ class HomeController extends Controller
         // Retrieves a paginated subset of houses based on the current page size.
         $paginatedHouses = $houses->slice($page * $this->pageSize, $this->pageSize);
 
-        $view = view('components.listinggrid', ['houses' => $paginatedHouses])->render();
-        $filter = new Filter($view, $houses->count());
-
-        return response()->json($filter);
+        $listinggrid = view('components.listinggrid', ['houses' => $paginatedHouses])->render();
+        return response()->json(new Filter($listinggrid, $houses->count()));
     }
 
     public function pagination(Request $request): string

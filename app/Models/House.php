@@ -5,11 +5,8 @@ namespace App\Models;
 class House
 {
     public $street;
-
     public $city;
-
     public $price;
-
     public $image = null;
 
     public function __construct(string $street, string $city, int $price, ?string $image = null)
@@ -22,7 +19,7 @@ class House
 
     public function filter(?string $search = null, ?int $pmin = null, ?int $pmax = null): bool
     {
-        if ($search && ! (str_contains(strtolower($this->street), $search) || str_contains(strtolower($this->city), $search))) {
+        if ($search && !$this->in_search($search)) { 
             return false;
         }
 
@@ -34,5 +31,14 @@ class House
         }
 
         return true;
+    }
+
+    private function in_search(string $search) 
+    {
+        $search = strtolower($search);
+        $street = strtolower($this->street);
+        $city = strtolower($this->city);
+
+        return str_contains($street, $search) || str_contains($city, $search);
     }
 }

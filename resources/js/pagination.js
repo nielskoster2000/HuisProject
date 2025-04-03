@@ -1,38 +1,37 @@
-let currentPage = 0;
+let currentPageNumber = 0;
+const pagination = document.getElementById('pagination');
 
 window.reloadPagination = function () {
-    currentPage = 0;
-
     const previousButton = document.getElementById('previousButton');
     const nextButton = document.getElementById('nextButton');
     const paginationButtons = document.getElementsByClassName('paginationButton');
+    currentPageNumber = 0;
 
-    previousButton.addEventListener('click', function () { setPage(currentPage - 1) });
-    nextButton.addEventListener('click', function () { setPage(currentPage + 1) });
+    previousButton.addEventListener('click', function () { setPage(currentPageNumber - 1) });
+    nextButton.addEventListener('click', function () { setPage(currentPageNumber + 1) });
     for (let i = 0; i < paginationButtons.length; i++) {
         paginationButtons[i].addEventListener('click', function () { setPage(i) });
     }
 
-    setPage(currentPage, false);
+    setPage(currentPageNumber, false);
 }
 
-function setPage(page, dispatchEvent = true) {
-    const pagination = document.getElementById('pagination');
+function setPage(pageNumber, dispatchEvent = true) {
     const previousButton = document.getElementById('previousButton');
     const nextButton = document.getElementById('nextButton');
     const paginationButtons = document.getElementsByClassName('paginationButton');
 
-    paginationButtons[currentPage].classList.remove("active");
-    paginationButtons[page].classList.add("active");
+    paginationButtons[currentPageNumber].classList.remove("active");
+    paginationButtons[pageNumber].classList.add("active");
 
-    previousButton.classList.toggle("invisible", page <= 0);
-    nextButton.classList.toggle("invisible", page >= paginationButtons.length - 1);
+    previousButton.classList.toggle("invisible", pageNumber <= 0);
+    nextButton.classList.toggle("invisible", pageNumber >= paginationButtons.length - 1);
 
-    currentPage = page;
+    currentPageNumber = pageNumber;
 
     if (dispatchEvent) {
         pagination.dispatchEvent(new CustomEvent("pagechanged", {
-            detail: { page: currentPage }
+            detail: { pageNumber: currentPageNumber }
         }));
     }
 }
