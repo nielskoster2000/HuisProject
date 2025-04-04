@@ -2,59 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\Filter;
 use App\Services\HouseService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     private HouseService $houseService;
 
+    private int $pageSize = 9;
+
     public function __construct(HouseService $houseService)
     {
         $this->houseService = $houseService;
     }
 
-    public function index(Request $request)
+    public function index(): View
     {
         return view('home');
     }
 
-    public function filter(Request $request)
+    public function filter(Request $request): JsonResponse
     {
-        $search = strtolower($request->input('search'));
+        $search = $request->input('search');
         $pmin = $request->input('pmin');
         $pmax = $request->input('pmax');
-        $page = $request->input('page');
+        $page = $request->input('page', 0);
 
-        $houses = $this->houseService->getHouses();
-        $filteredHouses = $houses->filter(function ($item) use ($search, $pmin, $pmax) {
-            if ($search && ! (str_contains(strtolower($item['street']), $search) || str_contains(strtolower($item['city']), $search))) {
-                return false;
-            }
+        try {
+            $houses = $this->houseService->getHouses($search, $pmin, $pmax);
+        } catch (Exception $e) {
+            return abort(404, 'Failed to retrieve houses');
+        }
 
-            if ($pmin && $item['price'] < $pmin) {
-                return false;
-            }
-            if ($pmax && $item['price'] > $pmax) {
-                return false;
-            }
+        // Retrieves a paginated subset of houses based on the current page size.
+        $paginatedHouses = $houses->slice($page * $this->pageSize, $this->pageSize);
 
-            return true;
-        });
-
-        $count = $filteredHouses->count();
-        $paginatedHouses = $filteredHouses->slice($page * 9, 9);
-
-        return [
-            'housesHTML' => view('components.listinggrid', ['houses' => $paginatedHouses])->render(),
-            'count' => $count,
-        ];
+        $listinggrid = view('components.listinggrid', ['houses' => $paginatedHouses])->render();
+        return response()->json(new Filter($listinggrid, $houses->count()));
     }
 
-    public function pagination(Request $request)
+    public function pagination(Request $request): string
     {
-        $count = $request->input('count');
-        $pageCount = ceil($count / 9);
+        $count = $request->input('count', 0);
+        $pageCount = ceil($count / $this->pageSize);
 
         return view('components.pagination', ['pageCount' => $pageCount])->render();
     }
